@@ -1,323 +1,371 @@
-<div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aicodebyprince/College-Management-App/main/assets/rmc_logo.png">
-    <img src="https://raw.githubusercontent.com/Aicodebyprince/College-Management-App/main/assets/rmc_logo.png" width="80" alt="RMC Logo">
-  </picture>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Aicodebyprince/College-Management-App/main/assets/rmc_logo.png" width="64" height="64" alt="RMC Logo"/>
+</p>
 
-  <h1>RMC — College Management App</h1>
+<h1 align="center">College Management App</h1>
 
-  **Flutter + Firebase** · Multi-role academic management system  
-  `Built for Reena Mehta College, University of Mumbai`
+<p align="center">
+  <strong>Role-based academic management platform for RMC (Reena Mehta College)</strong>
+</p>
 
-  <br/>
-
-  [Report Bug](https://github.com/Aicodebyprince/College-Management-App/issues) · [Request Feature](https://github.com/Aicodebyprince/College-Management-App/issues)
-
-</div>
-
----
+<p align="center">
+  <a href="#overview">Overview</a> · 
+  <a href="#architecture">Architecture</a> · 
+  <a href="#features">Features</a> · 
+  <a href="#screenshots">Screenshots</a> · 
+  <a href="#tech-stack">Tech Stack</a> · 
+  <a href="#project-structure">Structure</a> · 
+  <a href="#quick-start">Quick Start</a>
+</p>
 
 <br/>
 
-## The Problem
-
-College administration involves a constellation of disconnected workflows — attendance registers, notice boards, syllabus distribution, timetable changes, event announcements, academic calendars, and fee records. Each workflow lives in its own spreadsheet, paper register, or WhatsApp group. The result: information fragmentation, manual duplication, and a coordination tax that compounds across every role in the institution.
-
-This app consolidates those workflows into a **single mobile interface** with role-specific views, real-time data sync, and a unified authentication layer.
-
 ---
 
-## The Solution
+## Overview
 
-A **Flutter + Firebase** mobile application serving four distinct user roles — Admin, Teacher, Student, and Visitor — each with a tailored dashboard, permissions, and feature set. The architecture follows a component-based Flutter pattern with Firebase as the backend substrate: Auth for identity, Firestore for real-time data, and Storage for file distribution.
+College Management App consolidates fragmented academic workflows—attendance tracking, syllabus distribution, event management, document sharing, and admissions—into a single mobile interface with **role-aware access control**.
 
-```mermaid
-graph TB
-    subgraph "Client (Flutter)"
-        Splash[Splash Screen - Session Check]
-        Landing[Landing Page - Admissions Info]
-        Login[Auth Layer - Firebase Auth]
-        
-        subgraph "Role Dashboards"
-            Admin[Admin Dashboard - Events · Students · Calendar]
-            Teacher[Teacher Dashboard - Attendance · Notes · Syllabus]
-            Student[Student Dashboard - Attendance · Syllabus · Profile]
-        end
-    end
-    
-    subgraph "Components Layer"
-        C1[App Bar · Drawer · Buttons]
-        C2[Containers · Headers · Text]
-        C3[Sliders · Tables · Calendar]
-        C4[Popups · Underlines · Images]
-    end
-    
-    subgraph "Firebase Backend"
-        FA[Firebase Auth - Email/Password]
-        FS[Cloud Firestore - Students · Attendance · Events]
-        FSt[Firebase Storage - Notes · Images · PDFs]
-    end
-    
-    subgraph "External"
-        URL[URL Launcher - Admission Portals]
-        File[File Handling - Download · Open · Share]
-    end
-    
-    Splash --> Landing
-    Landing --> Login
-    Login --> Admin
-    Login --> Teacher
-    Login --> Student
-    Admin --> FS
-    Teacher --> FS
-    Student --> FS
-    Admin --> FA
-    Teacher --> FA
-    Student --> FA
-    Teacher --> FSt
-    Student --> FSt
-    Admin --> URL
-    Landing --> C1
-    Landing --> C2
-    Admin --> C1
-    Teacher --> C1
-    Student --> C1
-    Admin --> C4
-    Student --> File
-```
+The app serves four distinct user categories—visitors, students, teachers, and administrators—each with a tailored view into the same institutional data layer. Rather than maintaining separate portals for each function (attendance in one system, syllabus in another, events in a third), the platform unifies them under a shared Firebase backend.
 
----
+**Why this exists:** Academic institutions typically run 3-5 disconnected systems (attendance software, syllabus PDFs, event notice boards, admission portals, calendar apps). This app eliminates that fragmentation by providing a single authenticated entry point that routes each user to the tools and data they need.
 
-## Role-Based Features
+<br/>
 
-### 🧑‍💼 Admin
+### Who It Serves
 
-| Feature | Implementation |
-|---------|---------------|
-| **Event Management** | CRUD operations on Firestore `events` collection with gradient app bar, multi-select deletion |
-| **Student Directory** | Filterable student lists by stream (BSC IT, BSC Data Science) and year (FY, SY, TY) with real-time search |
-| **Teacher Management** | Add/manage teacher accounts from the admin panel |
-| **Academic Calendar** | Calendar view of important academic dates and events |
-| **Student Details** | Drill-down view with roll number, email, stream, and year |
-| **Dashboard Analytics** | Overview of college events with FAB-based event creation |
+| Role | Access Scope | Primary Actions |
+|:-----|:-------------|:----------------|
+| **Visitor** | Public | View admissions info, course catalog, institutional pages |
+| **Student** | Personal | Track attendance, view syllabus, access notes, events, calendar |
+| **Teacher** | Assigned cohorts | Mark attendance, upload syllabus/notes, manage students |
+| **Admin** | Full system | Manage events, oversee students/teachers, bulk operations |
 
-### 🧑‍🏫 Teacher
-
-| Feature | Implementation |
-|---------|---------------|
-| **Attendance Marking** | Practical/theory attendance with Firebase persistence and percentage calculation |
-| **Notes Upload** | Image-based study material upload to Firebase Storage with stream/year organization |
-| **Syllabus Management** | Upload and manage syllabus documents with Firebase Storage integration |
-| **Student Management** | Add new students, view existing ones by stream/year, role-based access |
-| **Event Dashboard** | View college events with read-only access |
-| **Expandable FAB Menu** | Animated radial menu for quick access to attendance, notes, and syllabus actions |
-| **Class Timetables** | Manage and view class schedules with Firestore sync |
-
-### 🧑‍🎓 Student
-
-| Feature | Implementation |
-|---------|---------------|
-| **Attendance Dashboard** | Practical vs theory breakdown with percentage progress indicators |
-| **Syllabus Viewer** | Stream/year-based syllabus browsing with Firebase data |
-| **Notes Downloader** | Download study materials with permission handling and file opening |
-| **Profile View** | Personal details fetched from Firestore `students` collection |
-| **College Events** | Read-only event list with pull-to-refresh |
-| **Academic Calendar** | Student-facing calendar view |
-| **Timetable** | Personal class schedule with stream/year filtering |
-| **Bottom Navigation** | 4-tab navigation: Home, Attendance, Syllabus, Profile |
-
-### 👀 Visitor (Landing Page)
-
-| Feature | Implementation |
-|---------|---------------|
-| **Admissions Information** | Comprehensive admission links for FYJC, UG, and PG programs |
-| **Course Catalog** | Program listings: B.COM, B.A., B.SC., B.M.S., B.A.F., B.B.I., B.A.M.M.C., BSc IT, BSc Data Science, BSc Hospitality Studies |
-| **Institutional Info** | About Us, Facilities, Library, Code of Conduct, Alumni, Placement |
-| **Committees** | NSS Unit, IQAC, Examination Committee, Women Cell, Alumni Committee |
-| **Auto-Sliding Carousel** | Image slider for college announcements and highlights |
-| **University Portals** | Direct links to Mumbai University UG and PG admission portals |
-| **Registration** | New user registration flow |
-
----
+<br/>
 
 ## Architecture
 
-### File Structure
+The application follows a **three-tier role-based architecture** with Firebase as the shared backend infrastructure.
 
-```
-lib/
-├── main.dart                          # Entry point, splash screen, role routing
-│
-├── components/                        # 14 reusable UI components
-│   ├── app_bar.dart                   #   consistent app bar across screens
-│   ├── drawer.dart                    #   navigation drawer
-│   ├── auto_sliding_page_view.dart    #   image carousel for landing page
-│   ├── big_container.dart             #   large content container
-│   ├── button.dart                    #   reusable button with URL launch
-│   ├── header_title.dart              #   section headers with underline
-│   ├── image_title.dart               #   image + title combos
-│   ├── small_container.dart           #   compact content cards
-│   ├── small_text.dart                #   standardized typography
-│   ├── table.dart                     #   data tables
-│   ├── underline.dart                 #   visual dividers
-│   ├── underlined_text.dart           #   text with underline
-│   ├── popup_content.dart             #   modal content
-│   └── academic_calendar.dart         #   calendar widget
-│
-├── pages/                             # 25+ informational pages
-│   ├── about_us.dart                  #   college information
-│   ├── nss_unit.dart                  #   NSS committee details
-│   ├── iqac_committee.dart            #   IQAC information
-│   ├── library.dart                   #   library resources
-│   ├── placement.dart                 #   placement cell
-│   ├── facilities.dart                #   campus facilities
-│   ├── examination_scheme.dart        #   exam structure
-│   ├── merit_lists.dart               #   merit rankings
-│   ├── alumni_committee.dart          #   alumni info
-│   ├── feedback_forms.dart            #   student feedback
-│   ├── skill_development_program.dart #   skill programs
-│   ├── code_of_conduct.dart           #   conduct policy
-│   ├── student_satisfaction_survey.dart#  survey data
-│   ├── rti.dart                       #   RTI information
-│   └── ...                            #   more pages
-│
-├── landing_page.dart                  # Visitor-facing admissions hub
-├── loginpage.dart                     # Authentication screen
-├── forget_pass.dart                   # Password recovery
-│
-├── admindashboard.dart                # Admin panel with event CRUD
-├── teacherpage.dart                   # Teacher panel with attendance + notes
-├── studentdashboard.dart              # Student panel with 4-tab navigation
-│
-├── addstudent.dart                    # Student registration form
-├── student.dart                       # Student data model
-├── studenttimetable.dart              # Student schedule view
-│
-├── syllabus.dart                      # Syllabus viewer
-├── teachernotes.dart                  # Notes upload interface
-├── teacherpage.dart                   # Teacher profile + schedule
-│
-├── timetable.dart                     # Timetable management
-├── academic_calendar.dart             # Admin calendar
-├── academic_student_calendar.dart     # Student calendar
-│
-├── bscDS_FY.dart                      # BSC Data Science FY syllabus
-├── bscDS_SY.dart                      # BSC Data Science SY syllabus
-├── bscDS_TY.dart                      # BSC Data Science TY syllabus
-├── bscitsy.dart                       # BSC IT SY syllabus
-└── bscitty.dart                       # BSC IT TY syllabus
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        S[Splash Screen - Session Check]
+        L[Landing Page - Visitor Content]
+        A[Auth Layer - Firebase Auth]
+    end
+
+    subgraph "Role Layer"
+        AD[Admin Dashboard - Events, Students, Calendar]
+        TD[Teacher Dashboard - Attendance, Notes, Syllabus]
+        SD[Student Dashboard - Attendance, Syllabus, Profile]
+    end
+
+    subgraph "Firebase Backend"
+        FA[Firebase Auth - Email/Password]
+        FS[(Cloud Firestore - Students, Attendance, Events)]
+        FSt[Firebase Storage - Notes, Images, PDFs]
+    end
+
+    subgraph "Utility Layer"
+        URL[URL Launcher - Admission Portals]
+        FL[File Handling - Download, Open, Share]
+        SH[SharedPreferences - Session Cache]
+    end
+
+    S --> L
+    L --> A
+    A --> FA
+    FA --> SH
+    
+    SH --> AD
+    SH --> TD
+    SH --> SD
+    
+    AD --> FS
+    AD --> FSt
+    
+    TD --> FS
+    TD --> FSt
+    
+    SD --> FS
+    SD --> FSt
+    
+    AD --> URL
+    L --> URL
+    
+    SD --> FL
+    TD --> FSt
 ```
 
 ### Data Flow
 
 ```
-User Action → Flutter Widget → Firebase SDK → Firestore/Storage → Real-time UI Update
-     │                                                  │
-     └── SharedPreferences (session persistence) ───────┘
+User Action -> Widget -> Firestore SDK -> Authentication Check -> 
+Query/Write -> Real-time Snapshot -> State Update -> UI Rebuild
 ```
 
-- **Authentication**: Firebase Auth with email/password, session persisted via `SharedPreferences` with 5-day expiry
-- **Database**: Cloud Firestore with collections: `students`, `events`, `attendance`, `teachers`
-- **Storage**: Firebase Storage for notes images, syllabus PDFs, profile assets
-- **Real-time**: `StreamBuilder` + `snapshots()` for live attendance and event data
+All data access is gated through Firebase Auth. On login success, the app reads the user's stored role from SharedPreferences and routes to the appropriate dashboard. Firestore's snapshot listener ensures real-time updates across all connected clients—when a teacher marks attendance, the student dashboard reflects the change immediately.
 
----
+### Session Management
+
+The splash screen implements a **5-day session expiry** system:
+
+```
+App Start -> Check SharedPreferences for cached session
+  Session valid (< 5 days) -> Route to role dashboard
+  Session expired (>= 5 days) -> Clear cached tokens -> Show login
+```
+
+This balances convenience (users aren't constantly re-authenticating) with security (stale sessions are periodically invalidated).
+
+<br/>
+
+## Features
+
+### Authentication & Role Routing
+
+- Email/password authentication via Firebase Auth
+- Role detection from Firestore user data
+- 5-day cached session with automatic expiry
+- Role-specific dashboard routing (Admin, Teacher, Student)
+
+### Admin Panel
+
+| Feature | Implementation | Value |
+|:--------|:---------------|:------|
+| Event Management | Firestore CRUD with timestamps | Centralized notice system |
+| Student Directory | Stream/year filtering with real-time search | Instant cohort lookup |
+| Teacher Management | Dedicated add/manage flow | Reduces IT overhead |
+| Academic Calendar | Integrated calendar view | Unified scheduling |
+| Bulk Delete | Multi-select + batch Firestore delete | Efficient cleanup |
+| Gradient UI | Custom app bar with animated title transitions | Polished admin experience |
+
+### Teacher Panel
+
+| Feature | Implementation | Value |
+|:--------|:---------------|:------|
+| Attendance Marking | Per-student lecture tracking with type (Theory/Practical) | Granular attendance records |
+| Notes Upload | Firebase Storage + image_picker | Digital resource distribution |
+| Syllabus Management | Stream/year-specific syllabus CRUD | Structured curriculum delivery |
+| Student Management | Searchable lists by stream + year | Quick cohort access |
+| Expandable FAB | Animated 3-button action menu with scale transitions | Clean UI, fast actions |
+| Dashboard | Bottom nav with schedule + profile views | Dual-view efficiency |
+
+### Student Panel
+
+| Feature | Implementation | Value |
+|:--------|:---------------|:------|
+| Attendance Dashboard | Real-time Theory/Practical/Overall percentages with fl_chart | Visual attendance insight |
+| Syllabus Viewer | Stream/year-specific syllabus content | Always-accessible curriculum |
+| Notes Downloader | Firebase Storage + flutter_downloader + open_file | Offline resource access |
+| Profile Section | Personal info + session management | Self-service account |
+| College Events | Real-time Firestore event feed | Stay informed |
+| Academic Calendar | Integrated calendar view | Schedule planning |
+| Timetable | Stream/year timetable viewer | Daily schedule access |
+| Bottom Navigation | 4-tab with gradient active states | Intuitive navigation |
+
+### Visitor / Landing Page
+
+| Feature | Implementation | Value |
+|:--------|:---------------|:------|
+| Auto-Sliding Carousel | Custom PageView with auto-scroll | Dynamic content showcase |
+| Admission Portals | Direct links via url_launcher | One-tap application access |
+| Course Catalog | Programs, stream codes, university links | Complete academic info |
+| Institutional Pages | 20+ pages (About, Facilities, Placement, NSS, etc.) | Full college information |
+| Drawer Navigation | Comprehensive section navigation | Easy content discovery |
+| Contact & Queries | Direct call link for admission support | Immediate assistance |
+
+### Institutional Content Pages
+
+The app includes **20+ static content pages** covering the full institutional information suite:
+
+```
+About Us | Alumni Committee | Alumni Testimonials | Awards of Principal
+Code of Conduct | College Development | Examination Committee
+Examination Scheme | Facilities | Feedback Forms | IQAC Committee
+Library | Merit Lists | NSS Unit | Placement | Policy & Procedures | RTI
+Sample Feedback Forms | Skill Development Program
+Student Satisfaction Survey | Students' Corner
+```
+
+These pages are built using a modular component system (14 reusable widgets) that ensures visual consistency across the entire information architecture.
+
+<br/>
+
+## Screenshots
+
+> **Gallery coming soon.** Screenshots will be added after the next release.
+
+To capture the best screenshots for this README, run the app and capture these screens:
+
+1. **Landing Page** — The auto-sliding carousel with admission buttons visible (portrait, full page)
+2. **Admin Dashboard** — The event list with the gradient app bar and FAB visible
+3. **Teacher Panel** — The expandable FAB open state showing Add Attendance, Add Notes, Add Syllabus
+4. **Student Dashboard** — The attendance analytics screen showing Theory/Practical/Overall percentages
+5. **Syllabus Viewer** — A stream-specific syllabus screen showing structured content
+6. **Drawer Navigation** — The expanded navigation drawer showing the content hierarchy
+
+Upload screenshots to the `assets/` directory and reference them with `raw.githubusercontent.com` paths.
+
+<br/>
 
 ## Tech Stack
 
 | Category | Technology | Purpose |
-|----------|-----------|---------|
-| **Framework** | [Flutter](https://flutter.dev/) (3.22.1) | Cross-platform mobile UI |
-| **Language** | [Dart](https://dart.dev/) (3.7) | Type-safe application logic |
-| **Auth** | [Firebase Auth](https://firebase.google.com/docs/auth) | Email/password authentication |
-| **Database** | [Cloud Firestore](https://firebase.google.com/docs/firestore) | Real-time NoSQL data store |
-| **Storage** | [Firebase Storage](https://firebase.google.com/docs/storage) | File uploads (notes, images) |
-| **Charts** | [fl_chart](https://pub.dev/packages/fl_chart) | Attendance visualizations |
-| **Calendar** | [table_calendar](https://pub.dev/packages/table_calendar) | Academic calendar views |
-| **Image** | [photo_view](https://pub.dev/packages/photo_view) | Full-screen image viewing |
-| **Network** | [dio](https://pub.dev/packages/dio) | HTTP file downloads |
-| **Files** | [open_file](https://pub.dev/packages/open_file) | Open downloaded documents |
-| **Permissions** | [permission_handler](https://pub.dev/packages/permission_handler) | Runtime permission management |
-| **Downloads** | [flutter_downloader](https://pub.dev/packages/flutter_downloader) | Background file downloads |
-| **URLs** | [url_launcher](https://pub.dev/packages/url_launcher) | External portal navigation |
-| **Video** | [video_player](https://pub.dev/packages/video_player) | Video playback |
-| **Pickers** | [image_picker](https://pub.dev/packages/image_picker) / [file_picker](https://pub.dev/packages/file_picker) | Media selection |
-| **Session** | [shared_preferences](https://pub.dev/packages/shared_preferences) | Local session persistence |
-| **Typography** | [google_fonts](https://pub.dev/packages/google_fonts) | Custom fonts |
-| **Dates** | [intl](https://pub.dev/packages/intl) | Date formatting and localization |
-| **Icons** | [remixicon](https://pub.dev/packages/remixicon) / [cupertino_icons](https://pub.dev/packages/cupertino_icons) | Icon system |
+|:---------|:-----------|:--------|
+| **Core** | Flutter 3.7+ | Cross-platform UI framework |
+| | Dart 3.7+ | Application language |
+| **Backend** | Firebase Auth | Email/password authentication + role mapping |
+| | Cloud Firestore | Real-time document database |
+| | Firebase Storage | File storage for notes, images, PDFs |
+| **State & Data** | SharedPreferences | Session caching with 5-day expiry |
+| | Dio | HTTP client for downloads |
+| | path_provider | Local file path resolution |
+| | flutter_downloader | Background file download management |
+| **UI** | fl_chart | Attendance percentage visualization |
+| | table_calendar | Academic calendar views |
+| | photo_view / video_player | Media viewing (images, videos) |
+| **Utilities** | url_launcher | External portal navigation |
+| | image_picker | Camera/gallery media selection |
+| | permission_handler | Runtime permission management |
 
----
+<br/>
 
-## Getting Started
+## Project Structure
+
+```
+lib/
+  main.dart                   App entry, splash screen, session routing
+  landing_page.dart           Visitor landing with admission info
+  loginpage.dart              Authentication screen
+  admindashboard.dart         Admin panel: events, students, teachers
+  teacherpage.dart            Teacher panel: attendance, notes, syllabus
+  studentdashboard.dart       Student panel: attendance, syllabus, profile
+
+  components/                 14 reusable UI widgets
+    academic_calendar.dart    app_bar.dart    auto_sliding_page_view.dart
+    big_container.dart        button.dart     drawer.dart
+    header_title.dart         image_title.dart    popup_content.dart
+    small_container.dart      small_text.dart  table.dart
+    underline.dart            underlined_text.dart
+
+  pages/                      20+ institutional content pages
+    about_us.dart             alumni_committee.dart
+    alumni_testimonials.dart  awards_of_principal.dart
+    code_of_conduct.dart      college_development.dart
+    examination_committee.dart  examination_scheme.dart
+    facilities.dart           feedback_forms.dart
+    iqac_committee.dart       library.dart
+    merit_lists.dart          nss_unit.dart
+    placement.dart            policy_procedures.dart
+    rti.dart                  sample_feedback_forms.dart
+    skill_development_program.dart  student_satisfaction_survey.dart
+    students_corner.dart
+
+  syllabus/                   Stream-specific syllabus views
+    bscDS_FY.dart     bscDS_SY.dart     bscDS_TY.dart
+    bscitsy.dart      bscitty.dart
+
+  addstudent.dart     student.dart     studenttimetable.dart
+  timetable.dart      teachernotes.dart    syllabus.dart
+  academic_calendar.dart   academic_student_calendar.dart
+
+assets/
+  splashvideo.gif            Splash screen animation
+  rmc_logo.png               College logo
+  slider/                    Carousel images
+  landing_page/              Landing page assets
+  about_us/    feedback/    skill_development/
+  library/     merit_list/  nss_unit/      students_corner/
+```
+
+<br/>
+
+## Quick Start
 
 ### Prerequisites
 
-| Requirement | Version |
-|-------------|---------|
-| Flutter SDK | [Install guide](https://docs.flutter.dev/get-started/install) |
-| Dart SDK | Bundled with Flutter |
-| Firebase Project | With Auth + Firestore + Storage enabled |
-| Android Studio / VS Code | Flutter development |
+- Flutter SDK 3.7+
+- Dart 3.7+
+- Firebase project with Auth, Firestore, and Storage enabled
+- Android Studio / VS Code with Flutter extensions
 
 ### Setup
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/Aicodebyprince/College-Management-App.git
 cd College-Management-App
 
-# Install dependencies
+# 2. Install dependencies
 flutter pub get
 
-# Run the app
+# 3. Configure Firebase
+#    - Create a Firebase project at https://console.firebase.google.com
+#    - Enable Email/Password authentication
+#    - Create Firestore database in test mode
+#    - Create Storage bucket
+#    - Download google-services.json (Android) / GoogleService-Info.plist (iOS)
+#    - Place in respective platform directories
+
+# 4. Run the app
 flutter run
 ```
 
-### Firebase Configuration
-
-1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Create a new project (or use existing)
-3. Enable **Firebase Auth** → Email/Password sign-in
-4. Enable **Cloud Firestore** → Start in test mode
-5. Enable **Firebase Storage** → Configure rules
-6. Register an **Android app** and download `google-services.json` into `android/app/`
-7. Register an **iOS app** (if targeting iOS) and download `GoogleService-Info.plist`
-
----
-
-## Project Values
+### Firebase Data Structure
 
 ```
-Maintainability     ████████████████████████████░░  14 reusable components
-Coverage            ██████████████████████████████  4 roles · 30+ screens
-Real-time           ██████████████████████████████  Firestore live sync
-Offline persistence ████████████████░░░░░░░░░░░░░░  SharedPreferences sessions
-Accessibility       ██████████████████░░░░░░░░░░░░  Role-based navigation
+firestore/
+  students/{uid}/
+    name: string     email: string     rollNo: number
+    stream: "BSC IT" | "BSC Data Science"
+    year: "FY" | "SY" | "TY"
+
+  attendance/{uid}/
+    attendance: array [{ lectures: array }]
+      type: "Theory" | "Practical"
+      status: boolean
+
+  events/{eventId}/
+    title: string   description: string
+    date: timestamp   imageUrl: string
+
+  teachers/{uid}/
+    name: string   email: string   assignedClasses: array
 ```
 
----
+<br/>
 
-## Contributors
+## Roadmap
 
-| Name | Role |
-|------|------|
-| **Prince Vipul Sherathiya** | Developer |
-| **Shivam Shashikant Marolikar** | Developer |
-| **Prof. Ashok Yadav** | Guidance |
+- Push notifications — Real-time alerts for attendance, events, and announcements
+- Offline-first support — Local caching with Firestore offline persistence
+- QR code attendance — Scan-based attendance marking for faster check-ins
+- Parent portal — Guardian view of student attendance and performance
+- Fee management — Online fee payment and receipt generation
+- Exam results — Digital mark sheet distribution
+- Dark mode — Theme switching with persistent preference
 
-**Institution:** Reena Mehta College, University of Mumbai
-
----
-
-## License
-
-Distributed under the **MIT License**. See `LICENSE` for more information.
+<br/>
 
 ---
 
-<div align="center">
-  <small>Built with Flutter & Firebase by <strong>Prince Sherathiya</strong> — <a href="https://webturnerai.tech/">WebTurnerAI</a></small>
-  <br/>
-  <small>&copy; 2026</small>
-</div>
+<p align="center">
+  <strong>Built by <a href="https://github.com/Aicodebyprince">Prince Sherathiya</a></strong>
+</p>
+
+<p align="center">
+  <code>Flutter</code> + <code>Firebase</code> + <code>Dart</code>
+</p>
+
+<p align="center">
+  <em>
+    Open to: mobile engineering roles · Flutter consulting · 
+    <a href="https://github.com/Aicodebyprince">GitHub</a>
+  </em>
+</p>
+
+<p align="center">
+  <small>MIT License &middot; 2026</small>
+</p>
